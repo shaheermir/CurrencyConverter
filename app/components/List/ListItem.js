@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity } from 'react-native'
 
 import Icon from './Icon'
-import Seperator from './Seperator'
 import styles from './styles'
 
 const ListItem = ({
@@ -12,12 +11,17 @@ const ListItem = ({
   selected = false,
   checkmark = true,
   visible = true,
-  customIcon = null
+  customIcon = null,
+  iconBackground
 }) => (
-  <TouchableOpacity>
+  <TouchableOpacity onPress={onPress}>
     <View style={styles.row}>
       <Text style={styles.text}>{text}</Text>
-      {selected ? <Icon checkmark={checkmark} visible={visible} /> : <Icon />}
+      {selected ? (
+        <Icon checkmark={checkmark} visible={visible} iconBackground={iconBackground} />
+      ) : (
+        <Icon />
+      )}
       {customIcon}
     </View>
   </TouchableOpacity>
@@ -29,7 +33,8 @@ ListItem.propTypes = {
   selected: PropTypes.bool,
   checkmark: PropTypes.bool,
   visible: PropTypes.bool,
-  customIcon: PropTypes.element
+  customIcon: PropTypes.element,
+  iconBackground: PropTypes.string
 }
 
 export default ListItem

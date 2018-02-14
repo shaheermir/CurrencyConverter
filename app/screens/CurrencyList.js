@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, FlatList, StatusBar } from 'react-native'
+import { View, FlatList, StatusBar } from 'react-native'
 
 import { ListItem, Seperator } from '../components/List'
 import currencies from '../data/currencies'
