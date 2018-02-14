@@ -6,11 +6,19 @@ import Icon from './Icon'
 import Seperator from './Seperator'
 import styles from './styles'
 
-const ListItem = ({ text, onPress, selected = false, checkmark = true, visible = true }) => (
+const ListItem = ({
+  text,
+  onPress,
+  selected = false,
+  checkmark = true,
+  visible = true,
+  customIcon = null
+}) => (
   <TouchableOpacity>
     <View style={styles.row}>
       <Text style={styles.text}>{text}</Text>
       {selected ? <Icon checkmark={checkmark} visible={visible} /> : <Icon />}
+      {customIcon}
     </View>
   </TouchableOpacity>
 )
@@ -20,7 +28,8 @@ ListItem.propTypes = {
   onPress: PropTypes.func,
   selected: PropTypes.bool,
   checkmark: PropTypes.bool,
-  visible: PropTypes.bool
+  visible: PropTypes.bool,
+  customIcon: PropTypes.element
 }
 
 export default ListItem
