@@ -1,5 +1,5 @@
 import React from 'react'
-import { StatusBar, KeyboardAvoidingView } from 'react-native'
+import { StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
 
 import { Container } from '../components/Container'
 import { Logo } from '../components/Logo'
@@ -39,11 +39,16 @@ class Home extends React.Component {
   }
 
   render () {
+    const behavior = {}
+    if (Platform.OS === 'ios') {
+      behavior.behavior = 'padding'
+    }
+
     return (
       <Container>
         <StatusBar translucent={false} barStyle='light-content' />
         <Header onPress={this.handleOptionsPress} />
-        <KeyboardAvoidingView behavior='padding'>
+        <KeyboardAvoidingView {...behavior}>
           <Logo />
           <InputWithButton
             buttonText={TEMP_BASE_CURRENCY}
@@ -66,10 +71,7 @@ class Home extends React.Component {
             conversionRate={TEMP_CONVERSION_RATE}
           />
 
-          <ClearButton
-            text='Reverse Currencies'
-            onPress={this.handleSwapCurrency}
-          />
+          <ClearButton text='Reverse Currencies' onPress={this.handleSwapCurrency} />
         </KeyboardAvoidingView>
       </Container>
     )
