@@ -3,7 +3,7 @@ import EStyleSheet from 'react-native-extended-stylesheet'
 const styles = EStyleSheet.create({
   container: {
     alignItems: 'center',
-    paddingVertical: 25,
+    paddingVertical: 20,
     paddingHorizontal: 25
   },
   wrapper: {
