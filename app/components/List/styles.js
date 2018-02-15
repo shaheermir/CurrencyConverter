@@ -15,7 +15,6 @@ const styles = EStyleSheet.create({
     color: '$darkText'
   },
   seperator: {
-    // marginLeft: 20,
     backgroundColor: '$border',
     flex: 1,
     height: EStyleSheet.hairlineWidth
