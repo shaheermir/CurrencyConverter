@@ -11,15 +11,15 @@ export const createSwapCurrencyAction = () => ({
 
 export const createChangeCurrencyAmountAction = amount => ({
   type: CHANGE_CURRENCY_AMOUNT,
-  payload: parseFloat(amount) | 0
+  payload: parseFloat(amount)
 })
 
 export const createChangeBaseCurrencyAction = currency => ({
   type: CHANGE_BASE_CURRENCY,
-  payload: currency
+  currency: currency
 })
 
 export const createChangeQuoteCurrencyAction = currency => ({
   type: CHANGE_QUOTE_CURRENCY,
-  payload: currency
+  currency: currency
 })

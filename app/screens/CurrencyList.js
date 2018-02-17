@@ -11,13 +11,14 @@ import {
   createChangeQuoteCurrencyAction
 } from '../actions/currencies'
 
-const TEMP_CURRENT_CURRENCY = 'CAD'
-
 class CurrencyList extends React.Component {
   static propTypes = {
     navigation: PropTypes.object,
     changeBaseCurrency: PropTypes.func,
-    changeQuoteCurrency: PropTypes.func
+    changeQuoteCurrency: PropTypes.func,
+    baseCurrency: PropTypes.string,
+    quoteCurrency: PropTypes.string,
+    primaryColor: PropTypes.string
   }
 
   handlePress = currency => {
@@ -30,21 +31,28 @@ class CurrencyList extends React.Component {
     this.props.navigation.goBack(null)
   }
 
-  renderItem = ({ item }) => (
+  renderItem = ({ item }, comparisonCurrency) => (
     <ListItem
       text={item}
-      selected={item === TEMP_CURRENT_CURRENCY}
+      selected={item === comparisonCurrency}
       onPress={() => this.handlePress(item)}
+      iconBackground={this.props.primaryColor}
     />
   )
 
   render () {
+    let comparisonCurrency = this.props.baseCurrency
+
+    if (this.props.navigation.state.params.type === 'quote') {
+      comparisonCurrency = this.props.quoteCurrency
+    }
+
     return (
       <View style={{ flex: 1 }}>
         <StatusBar barStyle='default' translucent={false} />
         <FlatList
           data={currencies}
-          renderItem={this.renderItem}
+          renderItem={item => this.renderItem(item, comparisonCurrency)}
           keyExtractor={item => item}
           ItemSeparatorComponent={Seperator}
         />
@@ -53,7 +61,11 @@ class CurrencyList extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({})
+const mapStateToProps = state => ({
+  baseCurrency: state.currencies.baseCurrency,
+  quoteCurrency: state.currencies.quoteCurrency,
+  primaryColor: state.theme.primaryColor
+})
 
 const mapDispatchToProps = dispatch => ({
   changeBaseCurrency: currency => dispatch(createChangeBaseCurrencyAction(currency)),
