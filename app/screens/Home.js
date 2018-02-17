@@ -12,9 +12,7 @@ import { Header } from '../components/Header'
 
 import {
   createSwapCurrencyAction,
-  createChangeCurrencyAmountAction,
-  createChangeBaseCurrencyAction,
-  createChangeQuoteCurrencyAction
+  createChangeCurrencyAmountAction
 } from '../actions/currencies'
 
 class Home extends React.Component {
@@ -27,7 +25,8 @@ class Home extends React.Component {
     swapCurrency: PropTypes.func,
     conversionRate: PropTypes.number,
     isFetching: PropTypes.bool,
-    lastConveretedDate: PropTypes.object
+    lastConveretedDate: PropTypes.object,
+    primaryColor: PropTypes.string
   }
 
   handlePressBaseCurrency = () => {
@@ -63,23 +62,25 @@ class Home extends React.Component {
     }
 
     return (
-      <Container>
+      <Container backgroundColor={this.props.primaryColor}>
         <StatusBar translucent={false} barStyle='light-content' />
         <Header onPress={this.handleOptionsPress} />
         <KeyboardAvoidingView {...behavior}>
-          <Logo />
+          <Logo tintColor={this.props.primaryColor} />
           <InputWithButton
             buttonText={this.props.baseCurrency}
             onPress={this.handlePressBaseCurrency}
             defaultValue={this.props.amount.toString()}
             keyboardType='numeric'
             onChangeText={this.handleAmountChange}
+            textColor={this.props.primaryColor}
           />
           <InputWithButton
             editable={false}
             buttonText={this.props.quoteCurrency}
             onPress={this.handlePressQuoteCurrency}
             value={quotePrice}
+            textColor={this.props.primaryColor}
           />
 
           <LastConverted
@@ -111,7 +112,8 @@ const mapStateToProps = state => {
     isFetching: conversionSelector.isFetching,
     lastConveretedDate: conversionSelector.date
       ? new Date(conversionSelector.date)
-      : new Date()
+      : new Date(),
+    primaryColor: state.theme.primaryColor
   }
 }
 
