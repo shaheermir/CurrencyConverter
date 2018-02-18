@@ -1,6 +1,8 @@
 import React from 'react'
-import { Provider } from 'react-redux'
+import { Provider, connect } from 'react-redux'
 import EStyleSheet from 'react-native-extended-stylesheet'
+import { addNavigationHelpers } from 'react-navigation'
+import { createReduxBoundAddListener } from 'react-navigation-redux-helpers'
 
 import { AlertProvider } from './components/Alert'
 import Navigator from './config/routes'
@@ -20,10 +22,30 @@ EStyleSheet.build({
   $darkText: '#343434'
 })
 
+const addListener = createReduxBoundAddListener('root')
+
+const App = ({ dispatch, nav }) => (
+  <Navigator
+    navigation={addNavigationHelpers({
+      dispatch,
+      state: nav,
+      addListener
+    })}
+  />
+)
+
+const mapStateToProps = state => ({
+  nav: state.nav
+})
+
+const AppWithNavigation = connect(mapStateToProps)(App)
+
 export default () => (
   <Provider store={store}>
     <AlertProvider>
-      <Navigator onNavigationStateChange={null} />
+      <AppWithNavigation />
     </AlertProvider>
   </Provider>
 )
+
+// <Navigator onNavigationStateChange={null} />
