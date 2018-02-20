@@ -1,4 +1,5 @@
 import React from 'react'
+import { PropTypes } from 'prop-types'
 import { Provider, connect } from 'react-redux'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import { addNavigationHelpers } from 'react-navigation'
@@ -33,6 +34,11 @@ const App = ({ dispatch, nav }) => (
     })}
   />
 )
+
+App.propTypes = {
+  dispatch: PropTypes.func,
+  nav: PropTypes.object
+}
 
 const mapStateToProps = state => ({
   nav: state.nav
