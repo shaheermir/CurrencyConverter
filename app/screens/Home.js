@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
 import { connect } from 'react-redux'
+import { connectAlert } from '../components/Alert'
 
 import { Container } from '../components/Container'
 import { Logo } from '../components/Logo'
@@ -12,7 +13,8 @@ import { Header } from '../components/Header'
 
 import {
   createSwapCurrencyAction,
-  createChangeCurrencyAmountAction
+  createChangeCurrencyAmountAction,
+  createGetInitialConversionAction
 } from '../actions/currencies'
 
 class Home extends React.Component {
@@ -26,7 +28,20 @@ class Home extends React.Component {
     conversionRate: PropTypes.number,
     isFetching: PropTypes.bool,
     lastConveretedDate: PropTypes.object,
-    primaryColor: PropTypes.string
+    primaryColor: PropTypes.string,
+    getIntialConversion: PropTypes.func,
+    alertWithType: PropTypes.func,
+    currencyError: PropTypes.string
+  }
+
+  componentWillMount () {
+    this.props.getIntialConversion()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.currencyError && nextProps.currencyError !== this.props.currencyError) {
+      this.props.alertWithType('error', 'Error', nextProps.currencyError)
+    }
   }
 
   handlePressBaseCurrency = () => {
@@ -113,7 +128,8 @@ const mapStateToProps = state => {
     lastConveretedDate: conversionSelector.date
       ? new Date(conversionSelector.date)
       : new Date(),
-    primaryColor: state.theme.primaryColor
+    primaryColor: state.theme.primaryColor,
+    currencyError: state.currencies.error
   }
 }
 
@@ -122,8 +138,9 @@ const mapDispatchToProps = dispatch => {
     swapCurrency: () => {
       return dispatch(createSwapCurrencyAction())
     },
-    updateCurrencyAmount: amount => dispatch(createChangeCurrencyAmountAction(amount))
+    updateCurrencyAmount: amount => dispatch(createChangeCurrencyAmountAction(amount)),
+    getIntialConversion: () => dispatch(createGetInitialConversionAction())
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(connectAlert(Home))
