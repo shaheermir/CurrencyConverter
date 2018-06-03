@@ -2,6 +2,7 @@ import EStyleSheet from 'react-native-extended-stylesheet'
 
 const styles = EStyleSheet.create({
   container: {
+    flexDirection: 'row',
     position: 'absolute',
     left: 0,
     right: 0,
@@ -11,9 +12,12 @@ const styles = EStyleSheet.create({
     }
   },
   button: {
-    alignSelf: 'flex-end',
+    flex: 1,
     paddingVertical: 5,
     paddingHorizontal: 20
+  },
+  buttonRight: {
+    alignItems: 'flex-end'
   },
   icon: {
     width: 18

@@ -2,6 +2,8 @@ import { createStore, applyMiddleware } from 'redux'
 import logger from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers'
+import { persistStore, persistCombineReducers } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 
 import rootReducer from '../reducers'
 import rootSaga from './sagas'
@@ -18,8 +20,21 @@ if (process.env.NODE_ENV === 'development') {
   middleware.push(logger)
 }
 
-const store = createStore(rootReducer, applyMiddleware(...middleware))
+const configStore = () => {
+  const persistReducer = persistCombineReducers(
+    {
+      key: 'root',
+      storage,
+      blacklist: ['network']
+    },
+    rootReducer
+  )
 
-sagaMiddleware.run(rootSaga)
+  const store = createStore(persistReducer, applyMiddleware(...middleware))
+  const persistor = persistStore(store)
 
-export default store
+  sagaMiddleware.run(rootSaga)
+  return { store, persistor }
+}
+
+export default configStore

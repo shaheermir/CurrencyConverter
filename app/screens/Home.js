@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
+import { StatusBar, KeyboardAvoidingView, Platform, NetInfo } from 'react-native'
 import { connect } from 'react-redux'
 import { connectAlert } from '../components/Alert'
 
@@ -17,6 +17,8 @@ import {
   createGetInitialConversionAction
 } from '../actions/currencies'
 
+import { changeNetworkStatus } from '../actions/network'
+
 class Home extends React.Component {
   static propTypes = {
     navigation: PropTypes.object,
@@ -31,17 +33,28 @@ class Home extends React.Component {
     primaryColor: PropTypes.string,
     getIntialConversion: PropTypes.func,
     alertWithType: PropTypes.func,
-    currencyError: PropTypes.string
+    currencyError: PropTypes.string,
+    changeNetworkStatus: PropTypes.func,
+    connected: PropTypes.bool
   }
 
   componentWillMount () {
     this.props.getIntialConversion()
+    NetInfo.addEventListener('connectionChange', this.handleNetworkChange)
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.currencyError && nextProps.currencyError !== this.props.currencyError) {
       this.props.alertWithType('error', 'Error', nextProps.currencyError)
     }
+  }
+
+  componentWillUnmount () {
+    NetInfo.removeEventListener('connectionChange', this.handleNetworkChange)
+  }
+
+  handleNetworkChange = status => {
+    this.props.changeNetworkStatus(status.type)
   }
 
   handlePressBaseCurrency = () => {
@@ -64,6 +77,14 @@ class Home extends React.Component {
     this.props.navigation.navigate('Options', { title: 'Options' })
   }
 
+  handleDisconnectedPress = () => {
+    this.props.alertWithType(
+      'warn',
+      'No connection',
+      'Not connected to the internet - some features may not work.'
+    )
+  }
+
   render () {
     const behavior = {}
     if (Platform.OS === 'ios') {
@@ -79,7 +100,11 @@ class Home extends React.Component {
     return (
       <Container backgroundColor={this.props.primaryColor}>
         <StatusBar translucent={false} barStyle='light-content' />
-        <Header onPress={this.handleOptionsPress} />
+        <Header
+          onPress={this.handleOptionsPress}
+          onWarningPress={this.handleDisconnectedPress}
+          connected={this.props.connected}
+        />
         <KeyboardAvoidingView {...behavior}>
           <Logo tintColor={this.props.primaryColor} />
           <InputWithButton
@@ -114,6 +139,7 @@ class Home extends React.Component {
 
 const mapStateToProps = state => {
   const { baseCurrency, quoteCurrency, amount } = state.currencies
+  const { connected } = state.network
 
   const conversionSelector = state.currencies.conversions[baseCurrency] || {}
   const rates = conversionSelector.rates || {}
@@ -129,7 +155,8 @@ const mapStateToProps = state => {
       ? new Date(conversionSelector.date)
       : new Date(),
     primaryColor: state.theme.primaryColor,
-    currencyError: state.currencies.error
+    currencyError: state.currencies.error,
+    connected
   }
 }
 
@@ -139,7 +166,8 @@ const mapDispatchToProps = dispatch => {
       return dispatch(createSwapCurrencyAction())
     },
     updateCurrencyAmount: amount => dispatch(createChangeCurrencyAmountAction(amount)),
-    getIntialConversion: () => dispatch(createGetInitialConversionAction())
+    getIntialConversion: () => dispatch(createGetInitialConversionAction()),
+    changeNetworkStatus: info => dispatch(changeNetworkStatus(info))
   }
 }
 

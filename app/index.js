@@ -4,11 +4,12 @@ import { Provider, connect } from 'react-redux'
 import EStyleSheet from 'react-native-extended-stylesheet'
 import { addNavigationHelpers } from 'react-navigation'
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers'
+import { PersistGate } from 'redux-persist/es/integration/react'
 
 import { AlertProvider } from './components/Alert'
 import Navigator from './config/routes'
 
-import store from './config/store'
+import configStore from './config/store'
 
 EStyleSheet.build({
   $primaryBlue: '#4F6D7A',
@@ -46,12 +47,25 @@ const mapStateToProps = state => ({
 
 const AppWithNavigation = connect(mapStateToProps)(App)
 
-export default () => (
-  <Provider store={store}>
-    <AlertProvider>
-      <AppWithNavigation />
-    </AlertProvider>
-  </Provider>
-)
+export default class RPApp extends React.Component {
+  constructor (props) {
+    super(props)
+    const { store, persistor } = configStore()
+    this.state = {
+      store,
+      persistor
+    }
+  }
 
-// <Navigator onNavigationStateChange={null} />
+  render () {
+    return (
+      <Provider store={this.state.store}>
+        <PersistGate persistor={this.state.persistor}>
+          <AlertProvider>
+            <AppWithNavigation />
+          </AlertProvider>
+        </PersistGate>
+      </Provider>
+    )
+  }
+}
